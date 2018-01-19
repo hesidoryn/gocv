@@ -184,6 +184,29 @@ void WarpAffineWithParams(Mat src, Mat dst, Mat rot_mat, Size dsize, int flags, 
   cv::warpAffine(*src, *dst, *rot_mat, sz, flags, borderMode, c);
 }
 
+void CalcHist(Mats mats, IntVector channels_in, Mat mask, Mat dstHist, IntVector histSize_in, FloatVector ranges_in, bool accumulate = false) {
+  std::vector<cv::Mat> images;
+  for (int i = 0; i < mats.length; ++i) {
+    images.push_back(*mats.mats[i]);
+  }
+
+  std::vector<int> channels;
+  for(int i = 0, *v = channels_in.val; i < channels_in.length; ++v, ++i) {
+    channels.push_back(*v);
+  }
+  std::vector<int> histSize;
+  for(int i = 0, *v = histSize_in.val; i < histSize_in.length; ++v, ++i) {
+    histSize.push_back(*v);
+  }
+  std::vector<float> ranges; 
+  int i; float *v;
+  for(i = 0, v = ranges_in.val; i < ranges_in.length; ++v, ++i) {
+    ranges.push_back(*v);
+  }
+
+  cv::calcHist(images, channels, *mask, *dstHist, histSize, ranges, accumulate);
+}
+
 void ApplyColorMap(Mat src, Mat dst, int colormap) {
   cv::applyColorMap(*src, *dst, colormap);
 }

@@ -764,6 +764,47 @@ func WarpAffineWithParams(src, dst, m Mat, sz image.Point, flags InterpolationFl
 	C.WarpAffineWithParams(src.p, dst.p, m.p, pSize, C.int(flags), C.int(borderType), bv)
 }
 
+// CalcHist calculates a histogram of a set of arrays.
+//
+// For further details, please see:
+// https://docs.opencv.org/3.4.0/d6/dc7/group__imgproc__hist.html#ga4b2b5fd75503ff9e6844cc4dcdaed35d
+func CalcHist(images []Mat, channels []int, m, dst Mat, size []int, ranges []float64, accumulate bool) {
+	cMatArray := make([]C.Mat, len(images))
+	for i, r := range images {
+		cMatArray[i] = (C.Mat)(r.Ptr())
+	}
+	matsVector := C.struct_Mats{
+		mats:   (*C.Mat)(&cMatArray[0]),
+		length: C.int(len(images)),
+	}
+
+	cparams := []C.int{}
+	for _, v := range channels {
+		cparams = append(cparams, C.int(v))
+	}
+	channelsVector := C.struct_IntVector{}
+	channelsVector.val = (*C.int)(&cparams[0])
+	channelsVector.length = (C.int)(len(cparams))
+
+	cparams = []C.int{}
+	for _, v := range size {
+		cparams = append(cparams, C.int(v))
+	}
+	sizeVector := C.struct_IntVector{}
+	sizeVector.val = (*C.int)(&cparams[0])
+	sizeVector.length = (C.int)(len(cparams))
+
+	cFloatParams := []C.float{}
+	for _, v := range ranges {
+		cFloatParams = append(cFloatParams, C.float(v))
+	}
+	rangesVector := C.struct_FloatVector{}
+	rangesVector.val = (*C.float)(&cFloatParams[0])
+	rangesVector.length = (C.int)(len(cFloatParams))
+
+	C.CalcHist(matsVector, channelsVector, m.p, dst.p, sizeVector, rangesVector, C.bool(accumulate))
+}
+
 // ColormapTypes are the 12 GNU Octave/MATLAB equivalent colormaps.
 //
 // For further details, please see:

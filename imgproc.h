@@ -47,6 +47,9 @@ void WarpAffine(Mat src, Mat dst, Mat rot_mat, Size dsize);
 void WarpAffineWithParams(Mat src, Mat dst, Mat rot_mat, Size dsize, int flags, int borderMode, Scalar borderValue);
 void ApplyColorMap(Mat src, Mat dst, int colormap);
 void ApplyCustomColorMap(Mat src, Mat dst, Mat colormap);
+
+void CalcHist(Mats images, IntVector channels, Mat mask, Mat dstHist, IntVector histSize, FloatVector ranges, bool accumulate);
+
 #ifdef __cplusplus
 }
 #endif
